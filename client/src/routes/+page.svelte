@@ -6,8 +6,10 @@
   import Cursor from "$lib/cursor.svelte";
   import Message from "$lib/message.svelte";
 
-  const HOST = "http://localhost:3000";
-  const DB_NAME = "maindb";
+  const HOST = "https://maincloud.spacetimedb.com";
+  // const HOST = "ws://localhost:3000";
+
+  const DB_NAME = "simple-test-gamuwastaken";
 
   let id: Identity | undefined = $state(undefined);
 
@@ -17,7 +19,9 @@
     .onConnect((_conn, identity, _token) => {
       id = identity;
     })
-    .onConnectError((_ctx, _error) => {})
+    .onConnectError((_ctx, _error) => {
+      console.log(_error, HOST);
+    })
     .onDisconnect(() => {});
 
   createSpacetimeDBProvider(conn);
@@ -25,16 +29,12 @@
 </script>
 
 {#if id}
-  <Message {fps} />
+  <Message {id} {fps} />
 
   <Cursor {id} {fps} />
 {/if}
 
 <style>
-  :global(*) {
-    cursor: none;
-  }
-
   :global(body) {
     width: max(100vw, 100%);
     height: 100vh;

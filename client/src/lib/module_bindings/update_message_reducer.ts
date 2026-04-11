@@ -12,4 +12,5 @@ import {
 
 export default {
   message: __t.string(),
+  timestamp: __t.timestamp(),
 };

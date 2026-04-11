@@ -20,6 +20,8 @@ export type Cursor = __Infer<typeof Cursor>;
 export const Message = __t.object("Message", {
   id: __t.u8(),
   message: __t.string(),
+  timestamp: __t.timestamp(),
+  author: __t.identity(),
 });
 export type Message = __Infer<typeof Message>;
 

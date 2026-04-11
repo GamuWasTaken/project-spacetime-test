@@ -3,6 +3,6 @@
     "run": "cargo run"
   },
   "module-path": "./spacetimedb",
-  "database": "maindb",
+  "database": "simple-test-gamuwastaken",
   "server": "maincloud"
 }

@@ -58,6 +58,9 @@
 {/if}
 
 <style>
+  :global(*) {
+    cursor: none;
+  }
   .cursor {
     background-color: var(--color);
     display: block;

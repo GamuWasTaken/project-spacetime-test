@@ -13,4 +13,6 @@ import {
 export default __t.row({
   id: __t.u8().primaryKey(),
   message: __t.string(),
+  timestamp: __t.timestamp(),
+  author: __t.identity(),
 });

@@ -1,16 +1,27 @@
 <script lang="ts">
   import { useTable, useReducer } from "spacetimedb/svelte";
   import { tables, reducers } from "$lib/module_bindings";
+  import { Identity, Timestamp } from "spacetimedb";
   import { untrack } from "svelte";
 
   interface Props {
+    id: Identity;
     fps: number;
   }
-  const { fps }: Props = $props();
+  const { id, fps }: Props = $props();
   let dt = $derived(1000 / fps);
 
   const [_message] = useTable(tables.message);
-  let message = $derived($_message[0]?.message);
+  let message: string | undefined = $state(undefined);
+  $effect(() => {
+    if (
+      id.toHexString() == $_message[0]?.author.toHexString() &&
+      message != undefined
+    ) {
+    } else {
+      untrack(() => (message = $_message[0]?.message));
+    }
+  });
 
   const [_position] = useTable(tables.message_position);
   let [x, y] = $derived([$_position[0]?.x, $_position[0]?.y]);
@@ -49,7 +60,7 @@
 
 <svelte:window {onmouseup} />
 
-{#if message != undefined && x != undefined}
+{#if $_message[0]?.message != undefined && x != undefined}
   <div
     class="animate"
     style:--x={`${x}px`}
@@ -60,7 +71,19 @@
     {onmousemove}
     {onmousedown}
   >
-    <textarea bind:value={() => message, (v) => updateMessage({ message: v })}
+    <textarea
+      bind:value={
+        () => message,
+        (v) => {
+          message = v;
+          if (message != undefined) {
+            updateMessage({
+              message,
+              timestamp: Timestamp.now(),
+            });
+          }
+        }
+      }
     ></textarea>
   </div>
 {/if}

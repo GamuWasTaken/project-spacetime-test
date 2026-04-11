@@ -1,4 +1,4 @@
-use spacetimedb::{reducer, table, Identity, ReducerContext, Table};
+use spacetimedb::{reducer, table, Identity, ReducerContext, Table, Timestamp};
 
 #[reducer(init)]
 pub fn init(ctx: &ReducerContext) {
@@ -21,6 +21,8 @@ pub struct Message {
     #[primary_key]
     id: u8,
     message: String,
+    timestamp: Timestamp,
+    author: Identity,
 }
 
 #[table(accessor = message_position, public)]
@@ -35,6 +37,8 @@ pub fn init_message(ctx: &ReducerContext) {
     ctx.db.message().insert(Message {
         id: 0,
         message: "Try changing me".into(),
+        timestamp: ctx.timestamp,
+        author: ctx.identity(),
     });
     ctx.db
         .message_position()
@@ -42,8 +46,13 @@ pub fn init_message(ctx: &ReducerContext) {
 }
 
 #[reducer]
-pub fn update_message(ctx: &ReducerContext, message: String) {
-    ctx.db.message().id().update(Message { id: 0, message });
+pub fn update_message(ctx: &ReducerContext, message: String, timestamp: Timestamp) {
+    ctx.db.message().id().update(Message {
+        id: 0,
+        message,
+        timestamp,
+        author: ctx.sender(),
+    });
 }
 #[reducer]
 pub fn update_message_position(ctx: &ReducerContext, x: i32, y: i32) {
